@@ -1,0 +1,105 @@
+{VERSION 6 0 "IBM INTEL NT" "6.0" }
+{USTYLETAB {CSTYLE "Maple Input" -1 0 "Courier" 0 1 255 0 0 1 0 1 0 0 
+1 0 0 0 0 1 }{PSTYLE "Normal" -1 0 1 {CSTYLE "" -1 -1 "Times" 1 12 0 
+0 0 1 2 2 2 2 2 2 1 1 1 1 }1 1 0 0 0 0 1 0 1 0 2 2 0 1 }}
+{SECT 0 {EXCHG {PARA 0 "> " 0 "" {MPLTEXT 1 0 8 "restart;" }}}{EXCHG 
+{PARA 0 "> " 0 "" {MPLTEXT 1 0 81 "#required Maple packages\nwith(Line
+arAlgebra):\nwith(ListTools):\nwith(ArrayTools):\n" }}}{EXCHG {PARA 0 
+"> " 0 "" {MPLTEXT 1 0 104 "######################################DIJK
+STRAS ALGORITHM START#########################################" }}}
+{EXCHG {PARA 0 "> " 0 "" {MPLTEXT 1 0 1935 "Dijkstra := proc(A,S,E):\n
+ \n  #Total vertices in the graph\n \011vertexCount := Size(A,1);\n\n \+
+ \n \011shortestDistances := Array(1..vertexCount);\n \011addedVertice
+s := Array(1..vertexCount);\n\n  #Initializing shortest distances from
+ all vertices to infinity\n \011for i from 1 to vertexCount do:\n \011
+\011shortestDistances[i] := infinity;\n \011end do:\n \n \011#shortest
+ distance for the source vertex to itself is always 0.\n  shortestDist
+ances[S]:= 0;\n \011\n  #Array to store the shortest path tree.\n  par
+entArray:= Array(1..vertexCount);\n \011\n  #the Source vertex doesn't
+ have any parent.\n  parentArray[S]:= -1;\n \011\n  #This outer loop w
+ill get the shortest distance for all the vertices.\n \011for i from 1
+ to vertexCount do: \n \011\011nearestVertex := -1;\n \011\011shortest
+Distance := infinity;\n \011\011for j from 1 to vertexCount do:\n \011
+\011\011if (addedVertices[j]=0 and shortestDistances[j]<shortestDistan
+ce) then:\n \011\011\011\011nearestVertex := j;\n \011\011\011\011shor
+testDistance := shortestDistances[j];\n \011\011\011end if:\n \011\011
+end do:\n \011\011\n   #Including the resulted nearest vertex to the p
+ath.\n   addedVertices[nearestVertex] := 1;\n \n   #Updating the Adjac
+ent distances of the added vertex.\n \011\011for j from 1 to vertexCou
+nt do:\n \011\011\011distance:= A[nearestVertex,j];\n \011\011\011if (
+distance > 0 and ((shortestDistance+ distance)< shortestDistances[j]))
+ then:\n \011\011\011\011parentArray[j] := nearestVertex;\n \011\011
+\011\011shortestDistances[j] := shortestDistance+ distance;\n    end i
+f:\n \011\011end do:\n  end do:\n  \n  resultingPath:= Array():\n  get
+DijkstraPath(E,parentArray, resultingPath, 1):\n  print(Reverse(conver
+t(resultingPath, list)), shortestDistances[E]):\n\nend proc:\n\n\n#Hel
+per function that bactracks the path from the end vertex to the source
+ \ngetDijkstraPath:= proc(endVertex, parentArray,result, currentIndex)
+:\n \011\n  #If control reach the starting vertex end the recursion.\n
+  if(endVertex = -1) then:\n \011\011return;\n \011end if:\n\n \011get
+DijkstraPath(parentArray[endVertex],parentArray, result,currentIndex+1
+);\n \011result(currentIndex) := endVertex;\n\nend proc:" }}}{EXCHG 
+{PARA 0 "> " 0 "" {MPLTEXT 1 0 92 "###################################
+#####DIJKSTRAS ALGORITHM END ############################" }}}{EXCHG 
+{PARA 0 "> " 0 "" {MPLTEXT 1 0 0 "" }}}{EXCHG {PARA 0 "> " 0 "" 
+{MPLTEXT 1 0 0 "" }}}{EXCHG {PARA 0 "> " 0 "" {MPLTEXT 1 0 92 "#######
+################################Floyd Warshall Start #################
+###############" }}}{EXCHG {PARA 0 "> " 0 "" {MPLTEXT 1 0 679 "FloydWa
+rshall := proc(A):\n  \n  #Temporary Matrix which holds the clone of I
+nput Matrix A.(To avoid modifying the input array)\n  R:=Matrix():\n  \+
+vertexCount := Size(A,1):\n \n #Copying Values from Input Matrix to R.
+\n\011for i from 1 to vertexCount do :\n   \011\011for j from 1 to ver
+texCount do:\n\011\011\011   R(i,j):=A[i,j]:\n\011\011end do:\n\011end
+ do:\n\n # After this outer loop completes the n(total vertices) itera
+tions the matrix will have true shortest distances.\n for k from 1 to \+
+vertexCount do :\n \011\011for i from 1 to vertexCount do:\n \011\011
+\011for j from 1 to vertexCount do:\n \011\011\011\011if(R[i,k]+R[k,j]
+< R[i,j]) then:\n \011\011\011\011\011R[i,j] := R[i,k]+R[k,j]:\n \011
+\011\011\011end if:\n \011\011\011end do:\n \011\011end do:\n \011end \+
+do:\n \011print(R):\nend proc:" }}}{EXCHG {PARA 0 "> " 0 "" {MPLTEXT 
+1 0 90 "#######################################Floyd Warshall End ####
+############################" }}}{EXCHG {PARA 0 "> " 0 "" {MPLTEXT 1 
+0 0 "" }}}{EXCHG {PARA 0 "> " 0 "" {MPLTEXT 1 0 0 "" }}}{EXCHG {PARA 
+0 "> " 0 "" {MPLTEXT 1 0 90 "####################################### B
+ellman-Ford Start ###############################" }}}{EXCHG {PARA 0 "
+> " 0 "" {MPLTEXT 1 0 1434 "BellmanFord := proc(A):\n\n \011vertexCoun
+t := Size(A,1):\n  distances := Array(1..vertexCount);\n \011prevVerti
+ces := Array(1..vertexCount);\n \011\n  #Initializing all the distance
+s to infinity.\n  for i from 1 to vertexCount do:\n \011\011distances[
+i]:= infinity;\n \011end do;\n  \n  #Distance from start to itself is \+
+always 0 and it won't have any previous vertex.\n  distances[1] :=0;\n
+  prevVertices[1]:=-1;\n \011\n  #Checking for n-1 vertices\n \011for \+
+k from 1 to vertexCount-1 do:\n   #For Every edge (i,j) in graph we wi
+ll relax them for n-1 times.\n \011\011for i from 1 to vertexCount do:
+\n \011\011\011for j from 1 to vertexCount do:\n     #Relaxing the edg
+e (i,j).\n \011\011\011\011if(A[i,j]<>0 and distances[i]<infinity and \+
+distances[j] > distances[i]+A[i,j]) then:\n \011\011\011\011\011distan
+ces[j]:= distances[i]+ A[i,j];\n      prevVertices[j]:=i;\n \011\011
+\011\011end if;\n \011\011\011end do;\n \011\011end do;\n \011end do;
+\n \n  #we will repeat the same procedure to check if there are any ne
+gative cycles present.\n  #If there are any negative cycles, the dista
+nce will be least number and it wn't have any parent.\n  for k from 1 \+
+to vertexCount-1 do:\n \011\011for i from 1 to vertexCount do:\n \011
+\011\011for j from 1 to vertexCount do:\n \011\011\011\011if(A[i,j]<>0
+ and distances[i]<infinity and distances[j] > distances[i]+A[i,j]) the
+n:\n \011\011\011\011\011distances[j]:= -infinity;\n      prevVertices
+[j]:=-1;\n \011\011\011\011end if;\n \011\011\011end do;\n \011\011end
+ do;\n \011end do;\n \011print(distances,prevVertices);\n \011#The pre
+vVertices can be used to backtrack to find the paths as well.\n end pr
+oc:" }}}{EXCHG {PARA 0 "> " 0 "" {MPLTEXT 1 0 88 "####################
+################### Bellman-Ford End ###############################" 
+}}}{EXCHG {PARA 0 "> " 0 "" {MPLTEXT 1 0 0 "" }}}{EXCHG {PARA 0 "> " 
+0 "" {MPLTEXT 1 0 0 "" }}}{EXCHG {PARA 0 "> " 0 "" {MPLTEXT 1 0 81 "##
+##################################### DFS START ######################
+#########" }}}{EXCHG {PARA 0 "> " 0 "" {MPLTEXT 1 0 572 "DFS := proc(A
+,S):\n \011vertexCount := Size(A,1):\n \011visitedVertices := Array(1.
+.vertexCount):\n  resultPath:= Array();\n \011DFSHelper(A,S,vertexCoun
+t,visitedVertices,resultPath,true):\n \011print(resultPath);\nend proc
+:\n\nDFSHelper := proc(A,S,vertexCount,vArray, result,isEmpty):\n coun
+ter:=1;\n if (isEmpty=false) then:\n  counter:= Size(result)[2]+1;\n e
+nd if;\n result(counter):=S;\n tempindex := resultIndex+1;\n \011vArra
+y[S]:=1;\n \011for i from 1 to vertexCount do:\n \011\011if(vArray[i]=
+0 and A[S,i] <> 0) then:\n \011\011\011DFSHelper(A,i,vertexCount,vArra
+y,result,false);\n \011\011end if:\n \011\011end do:\n  end proc:" }}}
+{EXCHG {PARA 0 "> " 0 "" {MPLTEXT 1 0 0 "" }}}}{MARK "13 0 0" 216 }
+{VIEWOPTS 1 1 0 1 1 1803 1 1 1 1 }{PAGENUMBERS 0 1 2 33 1 1 }
