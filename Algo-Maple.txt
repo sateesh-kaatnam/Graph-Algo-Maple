@@ -1,0 +1,183 @@
+ restart;
+ with(LinearAlgebra):
+ with(ListTools):
+ with(ArrayTools);
+ 
+  [AddAlongDimension, Alias, AllNonZero, AnyNonZeros, BlockCopy,
+        CircularShift, ComplexAsFloat, Concatenate, Copy,
+        DataTranspose, Diagonal, Dimensions, ElementDivide,
+        ElementMultiply, ElementPower, Fill, FlipDimension,
+
+        HasNonZero, HasZero, IsEqual, IsZero, LowerTriangle,
+
+        MultiplyAlongDimension, NumElems, Permute, PermuteInverse,
+
+        RandomArray, RegularArray, RemoveSingletonDimensions,
+
+        Replicate, Reshape, SearchArray, Size, UpperTriangle]
+
+ 
+ testGraph := Matrix([[ 0, 4, 0, 0, 0, 0, 0, 8, 0 ],[ 4, 0, 8, 0, 0, 0, 0, 11, 0 ],
+  [ 0, 8, 0, 7, 0, 4, 0, 0, 2 ],[ 0, 0, 7, 0, 9, 14, 0, 0, 0 ],
+  [ 0, 0, 0, 9, 0, 10, 0, 0, 0 ],[ 0, 0, 4, 0, 10, 0, 2, 0, 0 ],
+  [ 0, 0, 0, 14, 0, 2, 0, 1, 6 ],[ 8, 11, 0, 0, 0, 0, 1, 0, 7 ],
+  [ 0, 0, 2, 0, 0, 0, 6, 7, 0 ]]):
+ getDijkstraPath:= proc(endVertex, parentArray,result, currentIndex) description "Utility function for Dijkstras to get the path from start to end vertex":
+ 	if(endVertex = -1) then:
+ 		return:
+ 	end if:
+ 	getDijkstraPath(parentArray[endVertex],parentArray, result,currentIndex+1):
+ 	result(currentIndex) := endVertex
+ end proc:
+ Dijkstra := proc(A,S,E):
+ 
+  #Local Variables specific to this procedure
+  
+ 
+  #Total number ofVertices
+ 	v := Size(A,1):
+ 
+ 	shortestDistances := Array(1..v):
+ 	addedVertices := Array(1..v):
+ 
+ 	for i from 1 to v do:
+		shortestDistances[i] := infinity:
+ 		addedVeritices[i]:=0
+ 	end do:
+ 
+ 	shortestDistances[S]:= 0:
+ 	parentArray:= Array(1..v):
+ 	parentArray[S]:= -1:
+ 	
+ 	for i from 1 to v do:
+ 		nearestVertex := -1:
+ 		shortestDistance := infinity:
+ 		
+   for j from 1 to v do:
+ 			if (addedVertices[j]=0 and shortestDistances[j]<shortestDistance) then:
+ 				nearestVertex := j:
+ 				shortestDistance := shortestDistances[j]:
+ 			end if:
+ 		end do:
+ 		addedVertices[nearestVertex] := 1:
+ 
+ 		for j from 1 to v do:
+ 			distance:= A[nearestVertex,j]:
+ 			if (distance > 0 and ((shortestDistance+ distance)< shortestDistances[j])) then:
+ 				parentArray[j] := nearestVertex:
+ 				shortestDistances[j] := shortestDistance+ distance:
+     			end if:
+ 		end do:
+  end do:
+ resultingPath:= Array():
+ getDijkstraPath(E,parentArray, resultingPath, 1):
+ print(Reverse(convert(resultingPath, list)), shortestDistances[E]):
+ #print(shortestDistances[E]):
+ end proc:
+Dijkstra(testGraph,5,1);
+
+                         [5, 6, 7, 8, 1], 21
+
+Dijkstra(testGraph,1,5);
+
+                         [1, 8, 7, 6, 5], 21
+
+FloydWarshall := proc(A):
+   R:=Matrix():
+   v := Size(A,1):
+   
+ 	for i from 1 to v do :
+    		for j from 1 to v do:
+ 			   R(i,j):=A[i,j]:
+ 		end do:
+ 	end do:
+  	for i from 1 to v do :
+  		for j from 1 to v do:
+  			for k from 1 to v do:
+  				if(R[j,i]+R[i,k]< R[j,k]) then:
+  					R[j,k] := R[j,i]+R[i,k]:
+  				end if:
+  			end do:
+  		end do:
+  	end do:
+  	print(R):
+ end proc:
+
+ fwTestgraph:= Matrix([[ 0, 5, infinity, 10 ], [ infinity, 0, 3, infinity], [infinity, infinity, 0, 1], [ infinity, infinity, infinity,0 ]]):
+ FloydWarshall(fwTestgraph);
+
+               [   0           5           8        9]
+               [                                     ]
+               [infinity       0           3        4]
+               [                                     ]
+               [infinity    infinity       0        1]
+               [                                     ]
+               [infinity    infinity    infinity    0]
+
+ DFSTestGraph:=Matrix([[0,1,0,0,0],[1,0,1,0,0],[0,1,0,1,0],[0,0,1,0,1],[0,0,0,1,0]]):
+ DFSHelper := proc(A,S,v,visited, result,isEmpty):
+ counter:=1;
+ if (isEmpty=false) then:
+  counter:= Size(result)[2]+1;
+ end if;
+ result(counter):=S;
+ tempindex := resultIndex+1;
+ 	visited[S]:=1;
+ 	for i from 1 to v do:
+ 		if(visited[i]=0 and A[S,i] = 1) then:
+ 			DFSHelper(A,i,v,visited,result,false);
+ 		end if:
+ 		end do:
+ 
+ end proc:
+
+ DFS := proc(A,S):
+ 	v := Size(A,1):
+ 	visited := Array(1..v):
+  resultArray:= Array();
+ 	DFSHelper(A,S,v,visited,resultArray,true):
+ 	print(resultArray);
+ end proc:
+ 
+ DFSTestGraph:=Matrix([[0,1,0,0,0],[1,0,1,0,0],[0,1,0,1,0],[0,0,1,0,1],[0,0,0,1,0]]):
+
+ 
+
+ BellmanFord := proc(A):
+ 	v := Size(A,1):
+ 	dist := Array(1..v);
+ 	resultVertices := Array(1..v);
+ 	for m from 1 to v do:
+ 		dist[m]:= infinity;
+ 	
+ end do;
+ 	dist[1] :=0;
+ resultVertices[1]:=-1;
+ 	
+ 	for k from 1 to v do:
+ 		for i from 1 to v do:
+ 			for j from 1 to v do:
+ 				if(dist[i]<>infinity  and A[i,j]<>0 and dist[j] > dist[i]+A[i,j]) then:
+ 					dist[j]:= dist[i]+ A[i,j];
+      resultVertices[j]:=i;
+ 				end if;
+ 			end do;
+ 		end do;
+ 	end do;
+
+  for k from 1 to v do:
+    for i from 1 to v do:
+      for j from 1 to v do:
+        if(dist[i]<>infinity  and A[i,j]<>0 and dist[j] > dist[i]+A[i,j]) then:
+          print("Negative Cycle");
+          return;
+      end do;
+    end do;
+  end do;
+ 
+ 	print(dist);
+  print(vertices);
+ 	
+ end proc:
+
+ 
